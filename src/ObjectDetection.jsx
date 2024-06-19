@@ -4,6 +4,8 @@ import * as cocoSsd from "@tensorflow-models/coco-ssd";
 
 import "@tensorflow/tfjs";
 
+import Tracker from "./components/Tracker";
+
 const ObjectDetection = () => {
   const videoRef = useRef(null);
   const [isWebcamStarted, setIsWebcamStarted] = useState(false);
@@ -79,7 +81,7 @@ const ObjectDetection = () => {
           {isWebcamStarted ? "Stop" : "Start"} Webcam
         </button>
       </div>
-      <div style={{display:"flex", flexDirection:"row"}}>
+      <div style={{ display: "flex", flexDirection: "row" }}>
         <div className="feed">
           {isWebcamStarted ? <video ref={videoRef} autoPlay muted /> : <div />}
           {/* Add the tags below to show a label using the p element and a box using the div element */}
@@ -113,7 +115,7 @@ const ObjectDetection = () => {
             })}
         </div>
         {/* Add the tags below to show a list of predictions to user */}
-        {predictions.length > 0 && (
+        {/* {predictions.length > 0 && (
           <div>
             <h3>Predictions:</h3>
             <ul>
@@ -127,9 +129,10 @@ const ObjectDetection = () => {
             </ul>
             <p>Number of connections: {numOfDetections}</p>
           </div>
-        )}
-            </div>
+        )} */}
+        <Tracker predictions={predictions} />
       </div>
+    </div>
   );
 };
 
