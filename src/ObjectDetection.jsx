@@ -14,23 +14,28 @@ const ObjectDetection = () => {
 
   const [detectionInterval, setDetectionInterval] = useState();
 
-  const [classes, setClasses] = useState([]);
+  /** Returns an empty array if classes doesn't exist in the local storage
+      Otherwise, returns what is in local storage */
+  const [classes, setClasses] = useState(() => {
+    const localSavedClasses = localStorage.getItem("classes");
+    return localSavedClasses ? JSON.parse(localSavedClasses) : [];
+  });
 
   const clearList = () => {
+    localStorage.setItem("classes", JSON.stringify([]));
     setClasses([]);
   };
 
   const checkDuplicates = () => {
-    const guesses = predictions;
     const newClasses = [...classes];
-    for (let i = 0; i < guesses.length; i++) {
-      if (!newClasses.includes(guesses[i].class)) {
-        newClasses.push(guesses[i].class);
+    predictions.forEach((prediction) => {
+      if (!newClasses.includes(prediction.class)) {
+        newClasses.push(prediction.class);
       }
-    }
+    });
+    localStorage.setItem("classes", JSON.stringify(newClasses));
     setClasses(newClasses);
   };
-
 
   const startWebcam = async () => {
     try {
@@ -77,7 +82,7 @@ const ObjectDetection = () => {
       });
   };
 
-
+  // Adds new objects everytime there is a prediction happening
   useEffect(() => {
     checkDuplicates();
   }, [predictions]);

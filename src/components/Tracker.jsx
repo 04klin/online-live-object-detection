@@ -1,9 +1,6 @@
 const Tracker = (props) => {
-
-
   return (
     <div>
-
       <p>There are 80 classes in this model. Try to get them all!</p>
       <p>You have found {props.classes.length}/80!</p>
       {props.classes.map((foundClass, index) => (
