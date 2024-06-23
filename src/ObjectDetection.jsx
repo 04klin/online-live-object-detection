@@ -14,7 +14,23 @@ const ObjectDetection = () => {
 
   const [detectionInterval, setDetectionInterval] = useState();
 
-  const [numOfDetections, setNumOfDetections] = useState(0);
+  const [classes, setClasses] = useState([]);
+
+  const clearList = () => {
+    setClasses([]);
+  };
+
+  const checkDuplicates = () => {
+    const guesses = predictions;
+    const newClasses = [...classes];
+    for (let i = 0; i < guesses.length; i++) {
+      if (!newClasses.includes(guesses[i].class)) {
+        newClasses.push(guesses[i].class);
+      }
+    }
+    setClasses(newClasses);
+  };
+
 
   const startWebcam = async () => {
     try {
@@ -44,7 +60,6 @@ const ObjectDetection = () => {
       video.srcObject = null;
       setPredictions([]);
       setIsWebcamStarted(false);
-      setNumOfDetections(0);
     }
   };
 
@@ -55,7 +70,6 @@ const ObjectDetection = () => {
       .detect(videoRef.current)
       .then((predictions) => {
         setPredictions(predictions);
-        setNumOfDetections(predictions.length);
       })
 
       .catch((err) => {
@@ -63,9 +77,14 @@ const ObjectDetection = () => {
       });
   };
 
+
+  useEffect(() => {
+    checkDuplicates();
+  }, [predictions]);
+
   useEffect(() => {
     if (isWebcamStarted) {
-      setDetectionInterval(setInterval(predictObject, 500));
+      setDetectionInterval(setInterval(predictObject, 300));
     } else {
       if (detectionInterval) {
         clearInterval(detectionInterval);
@@ -80,6 +99,9 @@ const ObjectDetection = () => {
         <button onClick={isWebcamStarted ? stopWebcam : startWebcam}>
           {isWebcamStarted ? "Stop" : "Start"} Webcam
         </button>
+        {!isWebcamStarted && (
+          <button onClick={clearList}>Clear all classes found</button>
+        )}
       </div>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div className="feed">
@@ -127,10 +149,9 @@ const ObjectDetection = () => {
                 </li>
               ))}
             </ul>
-            <p>Number of connections: {numOfDetections}</p>
           </div>
         )} */}
-        <Tracker predictions={predictions} />
+        <Tracker classes={classes} />
       </div>
     </div>
   );
